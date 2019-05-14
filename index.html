@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="style.css">   
+    <title>CV - WZ</title>
+</head>
+<body>
+    <header>
+        <div>
+            <a href="#" onclick="showMenu();">
+                    <img src="images/index2.png" alt="menu" height="72px" width="72px">
+            </a>
+            </div>
+            <div id="title">
+                <h1>Welcome to My World!</h1>
+                <h2>Willian Zolnowski</h2>
+                <h3>Développeur JavaScript Full Stack</h3>
+            </div>
+            <div>
+                <a href="#" onclick="sound();">
+                    <img src="images/sound-on.png" alt="sound-on" height="72px" width="72px" id="sound">
+                </a>
+        </div>
+    </header>
+    <nav id="mymenu">
+        <ul>
+            <li><a href="index.html">Accueil (reset)</a></li>
+            <li><a href="#">Qui suis-je (CV)</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+    </nav>
+    <div class="container" id="container">
+        <div id="stage">
+            <h2>Eliminez les enemies!</h2>
+            <p>Utilisez les touches Q et D pour vous déplacer à gauche et à droite, ciblez avec la souris et tirez avec click gauche</p>
+            <button class="start" onclick="start();">Commencer!</button>
+        </div>
+    </div>
+    <script src="gameobject.js"></script>
+    <script src="auxiliaryFunctions.js"></script>
+    <script src="prototypes.js"></script>
+</body>
+</html>
