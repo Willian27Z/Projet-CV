@@ -129,6 +129,7 @@ var arsenal = {
         laser: false,
         battery: 1000,
         missilesAmmo: 50,
+        shield: false,
         ship: {
             x: 386,
             y: 550,
@@ -259,15 +260,16 @@ var mainLoop = function(){
         //Losing condition
         if(arsenal.existant[i].y >= 538){
             auxFunc.gameOver();
+            return "Game Over!";
         };
     };
     
-    //draws shots
+    //draws player shots
     for(var i = 0 ; arsenal.shots[i] ; i++){
         ctx.fillStyle = "aqua";
         arsenal.shots[i].draw();
         auxFunc.calcMove(arsenal.shots[i]);
-        //clean-up
+        //clean-up, removes enemy shots outside window
         if( (arsenal.shots[i].type === "blaster shot") && (arsenal.shots[i].x < -4 || arsenal.shots[i].x > 804 || arsenal.shots[i].y < -4) ) {
             arsenal.shots.splice(i,1);
         }
@@ -278,7 +280,7 @@ var mainLoop = function(){
         ctx.fillStyle = "red";
         arsenal.enemyShots[i].draw();
         auxFunc.calcMove(arsenal.enemyShots[i]);
-        //clean-up
+        //clean-up, removes enemy shots outside window
         if (arsenal.enemyShots[i].y > 610) {
             arsenal.enemyShots.splice(i,1);
         }
@@ -290,14 +292,21 @@ var mainLoop = function(){
         arsenal.player.battery -= 2;
     }
 
-    //Show score
-    ctx.fillStyle = "white";
-    ctx.font = '24px arial';
-    ctx.fillText(("Score: " + arsenal.player.score), 10, 50);
-    //Show Player health
-    ctx.fillText(("Health: " + arsenal.player.health), 10, 75);
+    //draws shield
+    if(arsenal.player.shield === true && (arsenal.player.battery > 0)){
+        arsenal.player.battery -= 1;
+        weapons.shield.draw();
+        if((arsenal.player.battery <= 0) && (weapons.laser.recharging === null)){
+            arsenal.player.shield = false;
+            weapons.laser.recharge();
+        };
+    }
 
-    //Collision system for player shots
+    //===============================
+    // COLLISION SYSTEM STARTS HERE
+    //===============================
+
+    //for player shots
     for(var i = 0 ; arsenal.existant[i] ; i++){     //pour chaque enemie existant
         arsenal.existant[i].path(arsenal.existant[i].x,arsenal.existant[i].y);
 
@@ -347,29 +356,48 @@ var mainLoop = function(){
     };
 
     //Collision system for Enemy shots
-    arsenal.player.ship.path();
     for(var i = 0 ; arsenal.enemyShots[i] ; i++){     //pour chaque enemy shot
+        if(arsenal.player.shield === true) {
+            weapons.shield.path(38);
+        } else {
+            arsenal.player.ship.path();
+        }
         if(ctx.isPointInPath(arsenal.enemyShots[i].x, arsenal.enemyShots[i].y) ){
-            arsenal.player.health -= 2;
+            if(arsenal.player.shield === true) {
+                weapons.shield.reflect(arsenal.enemyShots[i]);
+            } else {
+                arsenal.player.health -= 2;
+            }
             arsenal.enemyShots.splice(i,1);
         };
         if(arsenal.player.health <= 0){
             auxFunc.gameOver();
+            return "Game Over!";
         };
     };
+
+    //===============================
+    //  COLLISION ENDS HERE
+    //===============================
 
     //Draws FXs
     for(var i = 0; arsenal.fxEnCours[i]; i++){
         arsenal.fxEnCours[i].draw();
     }
 
-    //draws player
+    //Limite bordure pour player
     if(arsenal.player.ship.x >= 756){
         arsenal.player.ship.x = 756;
     } else if(arsenal.player.ship.x <= 10){
         arsenal.player.ship.x = 10;
     }
+
+    //draws player ship
     arsenal.player.ship.draw();
+
+    //===============================
+    //  UI STARTS HERE
+    //===============================
     
     //Draws weapon equiped
     // if(arsenal.player.weaponEquiped == "blaster"){
@@ -380,25 +408,39 @@ var mainLoop = function(){
     // }
     // ctx.drawImage(arsenal.images.weapons, 48, 0, 24, 24, 10, 120, 50, 50);
 
-    //Draws health
+    //Show score
+    ctx.fillStyle = "white";
+    ctx.font = '24px arial';
+    ctx.fillText(("Score: " + arsenal.player.score), 10, 50);
+    //Show Player health
+    ctx.fillText(("Health: " + arsenal.player.health), 10, 75);
+
+    //Draws health bar
     ctx.fillStyle = "white";
     ctx.fillRect(10, 90, 110, 9);
     ctx.fillStyle = "red";
     ctx.fillRect(15, 92, arsenal.player.health, 5);
 
-    //Draws laser bar
-    weapons.laser.drawBattery();
+    //Draws Battery bar
+    ctx.fillStyle = "white";
+    ctx.fillRect(10, 110, 110, 9);
+    ctx.fillStyle = "blue";
+    ctx.fillRect(15, 112, arsenal.player.battery/10, 5);
     
     //Draws Missile ammo
     ctx.fillStyle = "white";
     ctx.font = '24px arial';
-    ctx.fillText(("Missiles: " + arsenal.player.missilesAmmo), 10, 210);
+    ctx.fillText(("Missiles: " + arsenal.player.missilesAmmo), 10, 150);
     
     //Draws bar to next level
     ctx.fillStyle = "white";
     ctx.fillRect(10, 300, 13, 103);
     ctx.fillStyle = "green";
     ctx.fillRect(13, 400, 7, -(arsenal.player.levelScore*(100/arsenal.toNextLevel)));
+
+    //===============================
+    //  PROGRESSION
+    //===============================
 
     //progression - Level 2
     if((arsenal.player.score >= 20) && (arsenal.currentLevel === 1)){
@@ -494,6 +536,15 @@ var addListeners = function(){
             arsenal.audio.shotLoop++;
             if(arsenal.audio.shotLoop == 10){arsenal.audio.shotLoop = 0;};
             arsenal.player.missilesAmmo--;
+        }
+        if (key === "Enter"){
+            arsenal.fxEnCours.push(AddMegaBomb());
+        };
+        if (key === "e"){
+            arsenal.player.shield = !arsenal.player.shield;
+            if((arsenal.player.shield === false) && (weapons.laser.recharging === null)){
+                weapons.laser.recharge();
+            };
         }
     });
 

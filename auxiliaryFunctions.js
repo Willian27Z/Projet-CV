@@ -19,12 +19,16 @@ var auxFunc = {
             }
         }
 
-        if(obj.acceleration){
-            if(obj.target.hp > 0){  
-                obj.follow(obj.target);
+        if(obj.type === "missile"){
+            if(obj.target){
+                if(obj.target.hp > 0){  
+                    obj.follow(obj.target);
+                } else {
+                    obj.stopAndRetarget();
+                }  
             } else {
-                obj.stopAndRetarget();
-            }  
+                obj.target = auxFunc.findTarget();
+            }
         }
     },
     drawObject: function(ctx, obj){     //ctx => canvas 2d
@@ -110,15 +114,13 @@ var auxFunc = {
     findTarget: function(){
         for(var i = arsenal.player.ship.y ; i>0 ; i-=2){
             for (var j = 0; arsenal.existant[j] ; j++){
-                if((arsenal.existant[j].y > i) && (arsenal.existant[j].targetedBy === undefined) ){
-                    // console.log(arsenal.existant[j].x, arsenal.existant[j].y)
+                if((arsenal.existant[j].y > i) && (arsenal.existant[j].targetedBy === undefined)){
                     arsenal.existant[j].targetedBy = this;
-                    return arsenal.existant[j]
-                } else {
-                    // weapons.missile.stopAndRetarget();
-                };
+                    return arsenal.existant[j];
+                }
             };
         };
+        // console.log("darn...");
     },
     findAngle: function(obj){
         var b = obj.destX - obj.x;
@@ -139,10 +141,10 @@ var auxFunc = {
     },
     gameOver: function(){
         window.cancelAnimationFrame(arsenal.stopScene);
-            ctx.clearRect(0,0, 800, 600);
-            ctx.fillStyle = 'black';
-            ctx.font = '42px arial';
-            ctx.fillText("Vous avez perdu !", 200, 300);
-            ctx.fillText(("Votre Score: " + arsenal.player.score), 200, 350);
+        ctx.clearRect(0,0, 800, 600);
+        ctx.fillStyle = 'black';
+        ctx.font = '42px arial';
+        ctx.fillText("Vous avez perdu !", 200, 300);
+        ctx.fillText(("Votre Score: " + arsenal.player.score), 200, 350);
     }
 }

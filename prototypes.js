@@ -125,24 +125,46 @@ var weapons = {
             // }, 2000);
         },
         // rechargeStarted: null,
-        recharging: null,
-        drawBattery: function(){
-            ctx.fillStyle = "white";
-            ctx.fillRect(10, 170, 110, 9);
-            ctx.fillStyle = "blue";
-            ctx.fillRect(15, 172, arsenal.player.battery/10, 5);
-        }
+        recharging: null
     },
     megaBomb: {
         draw: function(){
-            // ctx.fillStyle = "aqua";
-            this.path(this.x, this.y);
+            ctx.fillStyle = "white";
+            this.path();
             ctx.fill();
         },
-        path: function(x,y){
+        path: function(){
             ctx.beginPath();
-            ctx.arc(400, 300, 3, 0, Math.PI*2 );
+            ctx.arc(400, 300, this.frames[this.currentSprite]*4, 0, Math.PI*2 );
             ctx.closePath();
+        },
+        explode: function(){
+            for(var i = 0 ; arsenal.existant[i] ; i++){
+                    arsenal.existant[i].hp -= 50;
+            };
+        }
+    },
+    shield: {
+        draw: function(){
+            ctx.strokeStyle = "aqua";
+            ctx.lineWidth = 3;
+            this.path(32);
+            ctx.stroke();
+        },
+        path: function(radius){
+            ctx.beginPath();
+            ctx.arc(arsenal.player.ship.x+16, arsenal.player.ship.y+16, radius+(arsenal.currentSprite*2), 0, Math.PI*2);
+            ctx.closePath();
+        },
+        reflect: function(shot){
+            var deltaX = shot.x - (arsenal.player.ship.x+16);
+            var deltaY = shot.y - (arsenal.player.ship.y+16);
+            shot.destX = shot.x + deltaX;
+            shot.destY = shot.y + deltaY;
+            // shot.directionX = null;
+            // shot.directionY = null;
+            // auxFunc.calcMove(shot);
+            arsenal.shots.push(AddBlasterShot(shot.x,shot.y,shot.destX,shot.destY));
         }
     }
 };
@@ -391,11 +413,28 @@ var AddExplosion = (function(){
     var CreateExplosion = function(x,y,size){
         this.x = x;
         this.y = y;
-        this.size = size
+        this.size = size;
         this.currentSprite = 0;
     };
     CreateExplosion.prototype = fx.explosion;
     return function(x,y,size){
         return new CreateExplosion(x,y,size);
+    };
+}());
+
+var AddMegaBomb = (function(){
+    var CreateMegaExplosion = function(){
+        this.frames = [];
+        this.radius = 0;
+        this.currentSprite = 0;
+        for(var i = 0 ; i < 101 ; i++){ //i va servir comme frames et aussi comme radius
+            this.frames.push(i);
+        };
+        this.explode();
+        console.log("BOOOM!");
+    };
+    CreateMegaExplosion.prototype = weapons.megaBomb;
+    return function(){
+        return new CreateMegaExplosion();
     };
 }());
