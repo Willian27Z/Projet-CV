@@ -1,75 +1,199 @@
 
+@font-face {
+  font-family: "dream mma";
+  src: url(./fonts/dreammma.ttf) format("truetype");
+}
+
 body {
-  margin: 0; }
+  margin: 0;
+  font-family: sans-serif;
+  background: black;
+  color: white;
+}
 
 h1,
 h2,
 h3 {
-  margin: 0; }
+  margin: 0 0 5px 0;
+}
+
+h1{
+  font-family: "dream mma";
+}
 
 a {
   text-decoration: none;
-  color: #009619; }
+  display: block;
+}
 
 header {
   background: black;
-  color: #009619;
+  color: #0a4998;
   text-align: center;
   display: flex;
-  justify-content: space-between; }
-  header i {
-    font-size: 72px;
-    padding: 10px; }
-  header div {
-    flex: auto;
-    flex-basis: 15%;
-    padding: 10px 0; }
+  justify-content: space-between;
+}
+
+header div {
+  flex: auto;
+  padding: 15px 0;
+}
 
 #title {
   flex-basis: 70%;
-  padding: 10px 0; }
+  padding: 10px 0;
+}
 
-h1 {
-  font-family: fantasy; }
+header + div {
+  position: relative;
+}
 
+h1,
 h2 {
-  font-family: 'Courier New', Courier, monospace; }
+  text-align: center;
+}
 
 nav {
-  background: brown;
-  position: fixed;
-  height: 100%;
-  top: 110px;
-  width: 200px;
+  border-radius: 10px;
+  border: 2px blue solid;
   margin-left: -200px;
-  animation: all 2s;
+  opacity: 0;
+  position: absolute;
+  width: 200px;
 }
 
 ul {
   list-style: none;
-  padding: 0; }
+  padding: 0;
+}
 
 li {
+  background: #0a4998;
+  border-radius: 10px;
   display: block;
-  background: darkslategray;
+  margin: 5px 5px;
   padding: 10px 0;
-  margin: 5px 10px; }
-  li a::before {
-    content: "\f054";
-    color: darkslategray;
-    margin: 10px; }
-  li a:hover::before {
-    color: brown; }
+}
+li a{
+  color: white;
+  text-align: center;
+}
+
+li a::before {
+  content: "go(";
+  display: none;
+  color: #0a4998; 
+}
+li a:hover::before {
+  color: white; 
+  display: inline;
+}
+li a::after {
+  content: ");";
+  display: none;
+  color: #0a4998; 
+}
+li a:hover::after {
+  color: white;
+  display: inline;
+}
 
 .container {
+  display: block;
   height: 100%;
-  display: flex;
-  justify-content: center; }
-  .container div {
-    margin: 50px 0; }
+  justify-content: center;
+  margin: auto;
+  width: 800px;
+}
+.container div {
+  margin: 20px 0; 
+}
+#stage {
+  display: block;
+  text-align: center;
+}
 
-h2 {
-  text-align: center; }
+#stage h2, 
+#stage h3 {
+  margin-bottom: 15px;
+}
+
+canvas {
+  border: 1px black solid;
+  display: block;
+  flex-basis: 100%;
+  margin: 10px auto;
+}
+
+#cvparts {
+  display: flex;
+  margin: 20px auto 0 auto;
+  width: 800px;
+}
+#cvparts div {
+  color: white;
+  flex-basis: 25%;
+  flex: auto;
+  font-family: 'Segoe UI';
+  text-align: center;
+}
+
+.fadeIn {
+  animation-name: unlock;
+  animation-duration: 3s;
+}
+
+.slideRight {
+  animation-duration: 1s;
+  animation-name: slideFromLeft;
+  margin-left: 0;
+  opacity: 1;
+}
+
+.slideLeft {
+  animation-name: slideFromRight;
+  animation-duration: 1s;
+  margin-left: -200px;
+}
+
+#cvparts div img {
+  display: block;
+  margin: auto;
+  
+}
+
+@keyframes unlock {
+  from{
+    margin-top: -50px;
+    opacity: 0;
+  }
+  to{
+    margin-top: 0;
+    opacity: 1;
+  }
+}
+
+@keyframes slideFromLeft{
+  from{
+    margin-left: -200px;
+    opacity: 0;
+  }
+  to{
+    margin-left: 0px;
+    opacity: 1;
+  }
+}
+
+@keyframes slideFromRight{
+  from{
+    margin-left: 0;
+    opacity: 1;
+  }
+  to{
+    margin-left: -200px;
+    opacity: 0;
+  }
+}
 
 button.start {
   background: blue;
@@ -77,10 +201,31 @@ button.start {
   border-style: none;
   color: white;
   display: block;
+  font-size: 20px;
   height: 30px;
-  margin: auto; }
-  button.start:hover {
-    background: black;
-    color: green; }
+  margin: auto;
+  padding: 0 10px;
+}
+button.start:hover {
+  background: aqua;
+  color: blue; 
+}
+button a {
+  color: #3f95ff;
+  display: inline;
+  text-decoration: none;
+}
+.reseaux{
+  display: flex;
+  justify-content: space-evenly;
+}
+.reseaux div {
+  margin: auto;
+}
+
+.reseaux a {
+  display: inline;
+  margin: auto;
+}
 
 /*# sourceMappingURL=style.css.map */

@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="style.css">   
     <title>CV - WZ</title>
 </head>
-<body>
+<body onload="">
     <header>
         <div>
             <a href="#" onclick="showMenu();">
@@ -15,8 +15,8 @@
             </a>
             </div>
             <div id="title">
-                <h1>Welcome to My World!</h1>
-                <h2>Willian Zolnowski</h2>
+                <h1>arsenal</h1>
+                <h2>Un Jeu de Willian Zolnowski</h2>
                 <h3>Développeur JavaScript Full Stack</h3>
             </div>
             <div>
@@ -25,26 +25,49 @@
                 </a>
         </div>
     </header>
-    <nav id="mymenu">
-        <ul>
-            <li><a href="index.html">Accueil (reset)</a></li>
-            <li><a href="#">Qui suis-je (CV)</a></li>
-            <li><a href="#">Contact</a></li>
-        </ul>
-    </nav>
+    <div>
+        <nav id="mymenu">
+            <ul>
+                <li><a href="index.html">Le Jeu</a></li>
+                <li><a href="cv.html">Mon CV</a></li>
+            </ul>
+        </nav>
+    </div>
     <div class="container" id="container">
         <div id="stage">
-            <h2>Eliminez les enemies!</h2>
-            <p>Utilisez les touches Q et D pour vous déplacer à gauche et à droite</p>
-            <p>Ciblez avec la souris et tirez avec click gauche</p>
-            <p>Activez le laser en restant appuyant sur la barre d'espace</p>
-            <p>Activez le bouclier avec la touche E</p>
-            <p>Lancez des missiles chasseurs avec Z</p>
-            <button class="start" onclick="start();">Commencer!</button>
+            <h2>Bienvenu(e)!</h2>
+            <h3>Objectif:</h3>
+            <p>Eliminez les enemies pour remplir votre bar de JS. Une fois que vous la remplissez, une partie du CV sera débloqué et vous passez au niveau suivant.</p>
+            <p>Completez le CV pour gagner!</p>
+            <hr>
+            <h3>Instructions:</h3>
+            <p>Utilisez les touches Q et D pour vous déplacer à gauche et à droite. Ciblez avec la souris et tirez avec click gauche. Vous pouvez pauser le jeu avec la touche P</p>
+            <p>Les enemies peuvent donner des boosts de HTML et de CSS si vous récupérez les logos avec votre vaiseeau.</p>
+            <p>Si un enemie touche la ligne rouge ou si votre niveau de HTML est finit, c'est game over!</p>
+            <hr>
+            <h3>A propos:</h3>
+            <p>Ce jeu a été développez dans le cadre de ma formation de développeur FullStack JS à IFOCOP. Il s'agit de mon premier projet Javascript abouti !</p>
+            <p>J'ai utilisé que du code Javascript "pur" pour le réaliser, sans aucune librairie ou framework.</p>
+            <p>Crédits à Surt, Skorpio et d'autres pour les images et sons utilisé dans le jeu, téléchargés depuis le site <a href="http://www.opengameart.org" target="_blank">opengameart.org</a></p>
+            <p>Et merci à Belkacem pour l'aide avec les missiles ;)</p>
+            <p>Dernière actualisation le 03/06/2019</p>
+            
+            <button class="start" onclick="start();">Start!</button>
+        </div>
+    </div>
+    <div id="cvparts">
+        <div id="divers">
+        </div>
+        <div id="experience">
+        </div>
+        <div id="formation">
+        </div>
+        <div id="competences">
         </div>
     </div>
     <script src="gameobject.js"></script>
     <script src="auxiliaryFunctions.js"></script>
     <script src="prototypes.js"></script>
+    <script src="newLevels.js"></script> 
 </body>
 </html>

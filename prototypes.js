@@ -98,6 +98,7 @@ var weapons = {
         }
     },
     laser: {
+        limit: 0,
         draw: function(){
             ctx.lineWidth = 3;
             this.path(arsenal.player.ship.x+16, arsenal.player.ship.y);
@@ -107,7 +108,7 @@ var weapons = {
         path: function(x,y){
             ctx.beginPath();
             ctx.moveTo(x, y);
-            ctx.lineTo(x,0);
+            ctx.lineTo(x, this.limit);
             ctx.closePath();
         },
         recharge: function(){
@@ -128,6 +129,7 @@ var weapons = {
         recharging: null
     },
     megaBomb: {
+        type: "Mega Bomb",
         draw: function(){
             ctx.fillStyle = "white";
             this.path();
@@ -135,25 +137,32 @@ var weapons = {
         },
         path: function(){
             ctx.beginPath();
-            ctx.arc(400, 300, this.frames[this.currentSprite]*4, 0, Math.PI*2 );
+            ctx.arc(this.x, 550, this.frames[this.currentSprite]*7, 0, Math.PI*2 );
             ctx.closePath();
         },
-        explode: function(){
-            for(var i = 0 ; arsenal.existant[i] ; i++){
-                    arsenal.existant[i].hp -= 50;
-            };
+        onCompletion: function(){
+            arsenal.player.megaBomb = false;
         }
     },
     shield: {
         draw: function(){
-            ctx.strokeStyle = "aqua";
-            ctx.lineWidth = 3;
+            //gradient test
+            var grd = ctx.createRadialGradient(arsenal.player.ship.x+16, arsenal.player.ship.y+24, 25, arsenal.player.ship.x+16, arsenal.player.ship.y+24, 45);
+            grd.addColorStop(0, "rgb(93,255,255, 0)");
+            grd.addColorStop(0.5, "rgb(93,255,255, 1)");
+            grd.addColorStop(1, "rgb(93,255,255, 0)");
+            ctx.strokeStyle = grd;
             this.path(32);
+            // ctx.fillStyle = "red";
+            // ctx.fill()
+            //
+            // ctx.strokeStyle = "aqua";
+            ctx.lineWidth = 5;
             ctx.stroke();
         },
         path: function(radius){
             ctx.beginPath();
-            ctx.arc(arsenal.player.ship.x+16, arsenal.player.ship.y+16, radius+(arsenal.currentSprite*2), 0, Math.PI*2);
+            ctx.arc(arsenal.player.ship.x+16, arsenal.player.ship.y+24, radius/*+(arsenal.currentSprite*2)*/, 0, Math.PI*2);
             ctx.closePath();
         },
         reflect: function(shot){
@@ -171,6 +180,53 @@ var weapons = {
 
 /*
 ===============================
+Prototype des Items
+===============================
+*/
+
+var items = {
+    html: {
+        draw: function(){
+            ctx.drawImage(arsenal.images.itemHtml, this.x, this.y);
+        },
+        onPickUp: function(){
+            arsenal.player.health += 10;
+            if(arsenal.player.health > 100){
+                arsenal.player.health = 100;
+            }
+        }
+    },
+    bootstrap: {
+        draw: function(){
+            ctx.drawImage(arsenal.images.itemBootstrap, this.x, this.y);
+        },
+        onPickUp: function(){
+            arsenal.player.missilesAmmo += 5;
+        }
+    },
+    mongo: {
+        draw: function(){
+            ctx.drawImage(arsenal.images.itemMongo, this.x, this.y);
+        },
+        onPickUp: function(){
+            arsenal.player.megaBombAmmo += 1;
+        }
+    },
+    css: {
+        draw: function(){
+            ctx.drawImage(arsenal.images.itemCss, this.x, this.y);
+        },
+        onPickUp: function(){
+            arsenal.player.battery += 100;
+            if(arsenal.player.battery > 1000){
+                arsenal.player.battery = 1000;
+            }
+        }
+    }
+}
+
+/*
+===============================
 Prototype des Enemies
 ===============================
 */
@@ -179,6 +235,7 @@ var enemies = {
     ghost: {
         type: "ghost",
         halfWidth: 16,
+        speed: 0.7,
         sprites: {
             still: [{
                 sx: 0,
@@ -191,17 +248,17 @@ var enemies = {
                 swidth: 32,
                 sheight: 32
             }],
-            moving: [{
-                sx: 64,
-                sy: 112,
-                swidth: 32,
-                sheight: 32
-            },{
-                sx: 96,
-                sy: 112,
-                swidth: 32,
-                sheight: 32
-            }],
+            // moving: [{
+            //     sx: 64,
+            //     sy: 112,
+            //     swidth: 32,
+            //     sheight: 32
+            // },{
+            //     sx: 96,
+            //     sy: 112,
+            //     swidth: 32,
+            //     sheight: 32
+            // }],
         },
         draw: function(){
             ctx.save();
@@ -216,7 +273,6 @@ var enemies = {
                 );
             ctx.restore();
         },
-        speed: 0.7,
         path: function(x,y){
             ctx.beginPath();
             ctx.arc(x, y, 12, 0, Math.PI*2);
@@ -227,7 +283,9 @@ var enemies = {
     hunter: {
         type: "hunter",
         halfWidth: 16,
+        speed: 0.8,
         nextCannon: "right",
+        shootChance: 5,
         sprites: {
             still: [{
                 sx: 0,
@@ -240,17 +298,17 @@ var enemies = {
                 swidth: 32,
                 sheight: 32
             }],
-            moving: [{
-                sx: 64,
-                sy: 80,
-                swidth: 32,
-                sheight: 32
-            },{
-                sx: 96,
-                sy: 80,
-                swidth: 32,
-                sheight: 32
-            }],
+            // moving: [{
+            //     sx: 64,
+            //     sy: 80,
+            //     swidth: 32,
+            //     sheight: 32
+            // },{
+            //     sx: 96,
+            //     sy: 80,
+            //     swidth: 32,
+            //     sheight: 32
+            // }],
         },
         draw: function(){
             ctx.save();
@@ -265,7 +323,6 @@ var enemies = {
                 );
             ctx.restore();
         },
-        speed: 0.8,
         path: function(x,y){
             ctx.beginPath();
             ctx.rect(x, y, 32, 25);
@@ -273,7 +330,7 @@ var enemies = {
             // ctx.fill();
         },
         shoot: function(){
-            if(auxFunc.rollDice(10)){
+            if(auxFunc.rollDice(this.shootChance)){
                 if(this.nextCannon === "right"){
                     this.nextCannon = "left";
                     arsenal.enemyShots.push(AddBlasterShot(this.x+28,this.y+20,this.x,630));
@@ -281,6 +338,147 @@ var enemies = {
                     this.nextCannon = "right";
                     arsenal.enemyShots.push(AddBlasterShot(this.x+4,this.y+20,this.x,630));
                 }
+            }
+        }
+    },
+    saucer: {
+        type: "saucer",
+        halfWidth: 48,
+        speed: 1,
+        shootChance: 5,
+        sprites: {
+            closed: {
+                sx: 0,
+                sy: 494,
+                swidth: 96,
+                sheight: 90
+            },
+            change: [{
+                sx: 96,
+                sy: 494,
+                swidth: 96,
+                sheight: 90
+            },{
+                sx: 192,
+                sy: 494,
+                swidth: 96,
+                sheight: 90
+            },{
+                sx: 288,
+                sy: 494,
+                swidth: 96,
+                sheight: 90
+            }],
+            opened: [{
+                sx: 384,
+                sy: 494,
+                swidth: 96,
+                sheight: 90
+            },{
+                sx: 480,
+                sy: 494,
+                swidth: 96,
+                sheight: 90
+            },{
+                sx: 576,
+                sy: 494,
+                swidth: 96,
+                sheight: 90
+            }],
+        },
+        draw: function(){
+            ctx.save();
+            ctx.translate(this.x, this.y)
+            ctx.rotate(this.angle * (Math.PI/180));
+            if(this.currentState === "closed"){
+                ctx.drawImage(
+                    arsenal.images.saucer, 
+                    this.sprites.closed.sx, 
+                    this.sprites.closed.sy, 
+                    this.sprites.closed.swidth, 
+                    this.sprites.closed.sheight,
+                    -48, -45, 96, 90
+                    );
+            }
+            if(this.currentState === "change"){
+                ctx.drawImage(
+                    arsenal.images.saucer, 
+                    this.sprites.change[this.currentSprite].sx, 
+                    this.sprites.change[this.currentSprite].sy, 
+                    this.sprites.change[this.currentSprite].swidth, 
+                    this.sprites.change[this.currentSprite].sheight,
+                    -48, -45, 96, 90
+                    );
+            }
+            if(this.currentState === "opened"){
+                ctx.drawImage(
+                    arsenal.images.saucer, 
+                    this.sprites.opened[this.currentSprite].sx, 
+                    this.sprites.opened[this.currentSprite].sy, 
+                    this.sprites.opened[this.currentSprite].swidth, 
+                    this.sprites.opened[this.currentSprite].sheight,
+                    -48, -45, 96, 90
+                    );
+                }
+            ctx.restore();
+            // pour debuger le bouclier
+            // ctx.strokeStyle = "blue";
+            // ctx.lineWidth = 2;
+            // this.pathShield(this.x,this.y);
+            // ctx.stroke();
+            // ctx.fillStyle = "red";
+            // this.path(this.x,this.y);
+            // ctx.fill();
+        },
+        pathShield: function(x,y){
+            ctx.save();
+            ctx.translate(x, y)
+            ctx.rotate(this.angle * (Math.PI/180));
+            if(this.currentState === "closed"){
+                ctx.beginPath();
+                ctx.arc(0, -2, 36, 0, Math.PI*2);
+                ctx.closePath();
+            } else {
+                ctx.beginPath();
+                ctx.arc(-13, -10, 34, 153*(Math.PI/180), 267*(Math.PI/180), false);
+                ctx.moveTo(16,-44);
+                ctx.arc(13, -10, 34, 290*(Math.PI/180), 25*(Math.PI/180), false);
+                ctx.moveTo(0,15);
+                ctx.arc(0, 10, 34, 145*(Math.PI/180), 33*(Math.PI/180), true);
+                ctx.closePath();
+            }
+            ctx.restore();
+        },
+        path: function(x,y){
+            ctx.beginPath();
+            ctx.arc(x, y-2, 15, 0, Math.PI*2);
+            ctx.closePath();
+        },
+        changeState: function(){
+            if((this.currentState === "closed") && (auxFunc.rollDice(0.8))){
+                this.previousState = "closed";
+                this.currentState = "change";
+                this.currentSprite = 0;
+                this.spriteIncrease = true;
+            }
+            if((this.currentState === "opened") && (auxFunc.rollDice(0.5))){
+                this.previousState = "opened";
+                this.currentState = "change";
+                this.currentSprite = 2;
+                this.spriteIncrease = false;
+            }
+            if((this.currentState === "change")){
+                if((this.previousState === "closed") && (this.currentSprite === 2)){
+                    this.currentState = "opened";
+                }
+                if((this.previousState === "opened") && (this.currentSprite === 0)) {
+                    this.currentState = "closed";
+                }
+            }
+        },
+        shoot: function(){
+            if(auxFunc.rollDice(this.shootChance)){
+                arsenal.enemyShots.push(AddBlasterShot(this.x,this.y,arsenal.player.ship.x,560));
             }
         }
     }
@@ -295,10 +493,10 @@ Animations
 var fx = {
     explosion: {
         frames: [
-            [192,192],
-            [128,192],
-            [64,192],
-            [0,192],
+            // [192,192],
+            // [128,192],
+            // [64,192],
+            // [0,192],
             [192,128],
             [128,128],
             [64,128],
@@ -334,6 +532,13 @@ var fx = {
                 fx.explosion.frames[this.currentSprite][1], 
                 64, 64, this.x, this.y, this.size, this.size
                 );
+        },
+        onCompletion: null,
+    },
+    fadeOut: {
+        draw: function(){
+            ctx.fillStyle = "rgb(0,0,0, " + this.frames[this.currentSprite] + ")";
+            ctx.fillRect(0,0,800,600);
         },
     }
 }
@@ -409,6 +614,45 @@ var AddHunter = (function(){
     }
 }());
 
+var AddSaucer = (function(){
+    var CreateSaucer = function(x,y,destX,destY){
+        this.x = x;
+        this.y = y;
+        this.destX = destX;
+        this.destY = destY;
+        this.directionX = null;
+        this.directionY = null;
+        this.hp = 5;
+        // states: "closed","change","opened",
+        this.currentState = "opened";
+        this.currentSprite = 0;
+        this.angle = 0;
+        this.spriteIncrease = true;
+        var thisEnemy = this;
+        this.rotator = setInterval(function(){
+            thisEnemy.angle++;
+            if(thisEnemy.angle >= 360){thisEnemy.angle = 0;}
+        },50);
+        this.spriteChanger = setInterval(function(){
+            if(thisEnemy.spriteIncrease){
+                thisEnemy.currentSprite++;
+                if(thisEnemy.currentSprite === 2){
+                    thisEnemy.spriteIncrease = false;
+                }
+            } else {
+                thisEnemy.currentSprite--;
+                if(thisEnemy.currentSprite === 0){
+                    thisEnemy.spriteIncrease = true;
+                }
+            }
+        },200);
+    }
+    CreateSaucer.prototype = enemies.saucer;
+    return function (x,y,destX,destY) {
+        return new CreateSaucer(x,y,destX,destY);
+    }
+}());
+
 var AddExplosion = (function(){
     var CreateExplosion = function(x,y,size){
         this.x = x;
@@ -424,17 +668,45 @@ var AddExplosion = (function(){
 
 var AddMegaBomb = (function(){
     var CreateMegaExplosion = function(){
+        this.x = arsenal.player.ship.x+16;
         this.frames = [];
         this.radius = 0;
         this.currentSprite = 0;
         for(var i = 0 ; i < 101 ; i++){ //i va servir comme frames et aussi comme radius
             this.frames.push(i);
         };
-        this.explode();
-        console.log("BOOOM!");
+        arsenal.player.megaBomb = this;
     };
     CreateMegaExplosion.prototype = weapons.megaBomb;
     return function(){
         return new CreateMegaExplosion();
     };
 }());
+
+var AddItem = function(x,y,type){
+    this.x = x;
+    this.y = y;
+    this.destX = x;
+    this.destY = 700;
+    this.directionX = null;
+    this.directionY = null;
+    this.speed = 1;
+    this.draw = type.draw;
+    this.onPickUp = type.onPickUp;
+};
+
+var AddFadeOut = (function(){
+    var CreateFadeOut = function(onCompletion){
+        this.frames = [];
+        this.currentSprite = 0;
+        for(var i = 0 ; i < 100 ; i++){ //i va servir comme transparence
+            this.frames.push(i/100);
+        };
+        this.onCompletion = onCompletion;
+    };
+    CreateFadeOut.prototype = fx.fadeOut;
+    return function(onCompletion){
+        return new CreateFadeOut(onCompletion);
+    };
+}());
+
